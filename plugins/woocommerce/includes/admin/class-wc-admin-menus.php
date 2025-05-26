@@ -80,6 +80,9 @@ class WC_Admin_Menus {
 
 		// Handle saving settings earlier than load-{page} hook to avoid race conditions in conditional menus.
 		add_action( 'wp_loaded', array( $this, 'save_settings' ) );
+
+		// Action to group core WordPress menus.
+		add_action( 'admin_menu', array( $this, 'custom_group_core_menus' ), 999 );
 	}
 
 	/**
@@ -94,7 +97,7 @@ class WC_Admin_Menus {
 			$menu[] = array( '', 'read', 'separator-woocommerce', '', 'wp-menu-separator woocommerce' ); // WPCS: override ok.
 		}
 
-		add_menu_page( __( 'WooCommerce', 'woocommerce' ), __( 'WooCommerce', 'woocommerce' ), 'edit_others_shop_orders', 'woocommerce', null, $woocommerce_icon, '55.5' );
+		add_menu_page( __( 'StarShop', 'woocommerce' ), __( 'StarShop', 'woocommerce' ), 'edit_others_shop_orders', 'woocommerce', null, $woocommerce_icon, '55.5' );
 
 		// Work around https://github.com/woocommerce/woocommerce/issues/35677 (and related https://core.trac.wordpress.org/ticket/18857).
 		// Translating the menu item breaks screen IDs and page hooks, so we force the hookname to be untranslated.
@@ -120,7 +123,7 @@ class WC_Admin_Menus {
 	public function settings_menu() {
 		$settings_page = add_submenu_page(
 			'woocommerce',
-			__( 'WooCommerce settings', 'woocommerce' ),
+			__( 'StarShop settings', 'woocommerce' ),
 			__( 'Settings', 'woocommerce' ),
 			'manage_woocommerce',
 			'wc-settings',
@@ -191,7 +194,7 @@ class WC_Admin_Menus {
 	 * Add menu item.
 	 */
 	public function status_menu() {
-		$status_page = add_submenu_page( 'woocommerce', __( 'WooCommerce status', 'woocommerce' ), __( 'Status', 'woocommerce' ), 'manage_woocommerce', 'wc-status', array( $this, 'status_page' ) );
+		$status_page = add_submenu_page( 'woocommerce', __( 'StarShop status', 'woocommerce' ), __( 'Status', 'woocommerce' ), 'manage_woocommerce', 'wc-status', array( $this, 'status_page' ) );
 
 		add_action(
 			'load-' . $status_page,
@@ -212,7 +215,7 @@ class WC_Admin_Menus {
 		$count_html = WC_Helper_Updater::get_updates_count_html();
 		/* translators: %s: extensions count */
 		$menu_title = sprintf( __( 'Extensions %s', 'woocommerce' ), $count_html );
-		add_submenu_page( 'woocommerce', __( 'WooCommerce extensions', 'woocommerce' ), $menu_title, 'manage_woocommerce', 'wc-addons', array( $this, 'addons_page' ) );
+		add_submenu_page( 'woocommerce', __( 'StarShop extensions', 'woocommerce' ), $menu_title, 'manage_woocommerce', 'wc-addons', array( $this, 'addons_page' ) );
 	}
 
 	/**
@@ -222,7 +225,7 @@ class WC_Admin_Menus {
 	 * @return void
 	 */
 	public function addons_my_subscriptions() {
-		add_submenu_page( 'woocommerce', __( 'WooCommerce extensions', 'woocommerce' ), null, 'manage_woocommerce', 'wc-addons', array( $this, 'addons_page' ) );
+		add_submenu_page( 'woocommerce', __( 'StarShop extensions', 'woocommerce' ), null, 'manage_woocommerce', 'wc-addons', array( $this, 'addons_page' ) );
 		// Temporarily hide the submenu item we've just added.
 		$this->hide_submenu_page( 'woocommerce', 'wc-addons' );
 	}
@@ -399,7 +402,7 @@ class WC_Admin_Menus {
 	 * Adapted from http://www.johnmorrisonline.com/how-to-add-a-fully-functional-custom-meta-box-to-wordpress-navigation-menus/.
 	 */
 	public function add_nav_menu_meta_boxes() {
-		add_meta_box( 'woocommerce_endpoints_nav_link', __( 'WooCommerce endpoints', 'woocommerce' ), array( $this, 'nav_menu_links' ), 'nav-menus', 'side', 'low' );
+		add_meta_box( 'woocommerce_endpoints_nav_link', __( 'StarShop endpoints', 'woocommerce' ), array( $this, 'nav_menu_links' ), 'nav-menus', 'side', 'low' );
 	}
 
 	/**
@@ -556,6 +559,76 @@ class WC_Admin_Menus {
 
 		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 		$submenu [ $parent_slug ][ $index ][4] = $css_classes;
+	}
+
+	/**
+	 * Groups core WordPress admin menus under a new "WordPress" top-level menu.
+	 */
+	public function custom_group_core_menus() {
+		$parent_slug = 'wordpress_core_overview_page'; // Slug for the new parent menu.
+
+		// Add the new top-level "WordPress" menu.
+		add_menu_page(
+			__( 'WordPress Core', 'woocommerce' ),    // Page title
+			__( 'WordPress', 'woocommerce' ),         // Menu title
+			'read',                                  // Capability
+			$parent_slug,                            // Menu slug
+			'',                                      // Callback function for the parent page (can be empty)
+			'dashicons-wordpress',                   // Icon
+			150                                      // Position (high number to place at bottom)
+		);
+
+		$core_menus_to_move = array(
+			'index.php'               => array( // Dashboard
+				'menu_title' => __( 'Dashboard', 'woocommerce' ),
+				'capability' => 'read',
+				'page_title' => __( 'Dashboard', 'woocommerce' ), // Explicit page title
+			),
+			'edit.php'                => array( // Posts
+				'menu_title' => __( 'Posts', 'woocommerce' ),
+				'capability' => 'edit_posts',
+				'page_title' => __( 'Posts', 'woocommerce' ),
+			),
+			'upload.php'              => array( // Media
+				'menu_title' => __( 'Media', 'woocommerce' ),
+				'capability' => 'upload_files',
+				'page_title' => __( 'Media Library', 'woocommerce' ),
+			),
+			'edit.php?post_type=page' => array( // Pages
+				'menu_title' => __( 'Pages', 'woocommerce' ),
+				'capability' => 'edit_pages',
+				'page_title' => __( 'Pages', 'woocommerce' ),
+			),
+			'edit-comments.php'       => array( // Comments
+				'menu_title' => __( 'Comments', 'woocommerce' ),
+				'capability' => 'moderate_comments',
+				'page_title' => __( 'Comments', 'woocommerce' ),
+			),
+			'users.php'               => array( // Users
+				'menu_title' => __( 'Users', 'woocommerce' ),
+				'capability' => 'list_users',
+				'page_title' => __( 'Users', 'woocommerce' ),
+			),
+		);
+
+		foreach ( $core_menus_to_move as $original_slug => $details ) {
+			// Remove the original top-level menu.
+			remove_menu_page( $original_slug );
+
+			// Add it as a submenu to the new "WordPress" parent.
+			add_submenu_page(
+				$parent_slug,
+				$details['page_title'],   // Page title for the submenu item
+				$details['menu_title'],   // Menu title for the submenu item
+				$details['capability'],   // Capability required to see this item
+				$original_slug,           // Original slug (important for WordPress to handle the page and its submenus)
+				null                      // Callback function (null for core WordPress pages as slug handles it)
+			);
+		}
+
+		// Optional: remove the auto-generated first submenu item for the parent page,
+		// if the parent page callback is empty and you don't want a "WordPress Core" submenu item.
+		remove_submenu_page( $parent_slug, $parent_slug );
 	}
 }
 
