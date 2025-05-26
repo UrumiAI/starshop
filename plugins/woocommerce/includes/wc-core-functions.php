@@ -2798,3 +2798,19 @@ function _wc_delete_transients( $transients ) {
 		}
 	}
 }
+
+/**
+ * Get the Redis connection instance if available.
+ *
+ * @since x.x.x
+ * @return \Redis|null Redis instance or null if not available.
+ */
+function wc_redis() {
+	$redis_manager = wc_get_container()->get( Automattic\WooCommerce\Internal\Redis\RedisManager::class );
+
+	if ( $redis_manager && $redis_manager->is_connected() ) {
+		return $redis_manager->get_instance();
+	}
+
+	return null;
+}

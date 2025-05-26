@@ -20,6 +20,22 @@ if ( ! defined( 'WC_PLUGIN_FILE' ) ) {
 	define( 'WC_PLUGIN_FILE', __FILE__ );
 }
 
+if ( ! defined( 'WC_REDIS_HOST' ) ) {
+	define( 'WC_REDIS_HOST', '127.0.0.1' );
+}
+if ( ! defined( 'WC_REDIS_PORT' ) ) {
+	define( 'WC_REDIS_PORT', 6379 );
+}
+if ( ! defined( 'WC_REDIS_TIMEOUT' ) ) {
+	define( 'WC_REDIS_TIMEOUT', 1 );
+}
+if ( ! defined( 'WC_REDIS_DATABASE' ) ) {
+	define( 'WC_REDIS_DATABASE', 0 );
+}
+if ( ! defined( 'WC_REDIS_AUTH' ) ) {
+	define( 'WC_REDIS_AUTH', '' );
+}
+
 // Load core packages and the autoloader.
 require __DIR__ . '/src/Autoloader.php';
 require __DIR__ . '/src/Packages.php';
