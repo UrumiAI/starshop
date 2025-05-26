@@ -210,11 +210,7 @@ final class QuantityLimits {
 		if ( is_null( $product->get_stock_quantity() ) ) {
 			return null;
 		}
-
-		$reserve_stock  = new ReserveStock();
-		$reserved_stock = $reserve_stock->get_reserved_stock( $product, $this->get_draft_order_id() );
-
-		return $product->get_stock_quantity() - $reserved_stock;
+		return $product->get_stock_quantity();
 	}
 
 	/**
