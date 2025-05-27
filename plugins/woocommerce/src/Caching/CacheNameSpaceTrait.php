@@ -3,14 +3,8 @@
 namespace Automattic\WooCommerce\Caching;
 
 /**
- * Implements namespacing algorithm to simulate grouping and namespacing for wp_cache, memcache and other caching engines that don't support grouping natively.
- *
- * See the algorithm details here: https://github.com/memcached/memcached/wiki/ProgrammingTricks#namespacing.
- *
- * To use the namespacing algorithm in the CacheEngine class:
- * 1. Use a group string to identify all objects of a type.
- * 2. Before setting cache, prefix the cache key by using the `get_cache_prefix`.
- * 3. Use `invalidate_cache_group` function to invalidate all caches in entire group at once.
+ * Previosly we implemented cache namespaces using a prefix for the cache key. But since Redis is guranteed now, we can directly use groups.
+ * Note this assumes `fast_build_key` method in `wp_object_cache` is available, which is the case for Redis Object Cache plugin.
  */
 trait CacheNameSpaceTrait {
 
