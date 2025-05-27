@@ -3,7 +3,7 @@
 namespace Automattic\WooCommerce\Caching;
 
 /**
- * Previosly we implemented cache namespaces using a prefix for the cache key. But since Redis is guranteed now, we can directly use groups.
+ * Previously we implemented cache namespaces using a prefix for the cache key. But since Redis is guranteed now, we can directly use groups.
  * Note this assumes `fast_build_key` method in `wp_object_cache` is available, which is the case for Redis Object Cache plugin.
  */
 trait CacheNameSpaceTrait {
