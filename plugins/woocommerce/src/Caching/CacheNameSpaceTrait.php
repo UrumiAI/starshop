@@ -21,15 +21,7 @@ trait CacheNameSpaceTrait {
 	 * @return string Prefix.
 	 */
 	public static function get_cache_prefix( $group ) {
-		// Get cache key - uses cache key wc_orders_cache_prefix to invalidate when needed.
-		$prefix = wp_cache_get( 'wc_' . $group . '_cache_prefix', $group );
-
-		if ( false === $prefix ) {
-			$prefix = microtime();
-			wp_cache_set( 'wc_' . $group . '_cache_prefix', $prefix, $group );
-		}
-
-		return 'wc_cache_' . $prefix . '_';
+		return $group;
 	}
 
 	/**
@@ -49,7 +41,7 @@ trait CacheNameSpaceTrait {
 	 * @since 3.9.0
 	 */
 	public static function invalidate_cache_group( $group ) {
-		return wp_cache_set( 'wc_' . $group . '_cache_prefix', microtime(), $group );
+		return wp_cache_flush_group( $group );
 	}
 
 	/**
@@ -61,6 +53,7 @@ trait CacheNameSpaceTrait {
 	 * @return string Prefixed key.
 	 */
 	public static function get_prefixed_key( $key, $group ) {
-		return self::get_cache_prefix( $group ) . $key;
+		global $wp_object_cache;
+		return $wp_object_cache->fast_build_key( $key, $group );
 	}
 }

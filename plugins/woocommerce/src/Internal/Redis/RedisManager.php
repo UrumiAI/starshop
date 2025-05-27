@@ -51,15 +51,6 @@ class RedisManager {
 	}
 
 	/**
-	 * Check if Redis is connected.
-	 *
-	 * @return bool
-	 */
-	public function is_connected() {
-		return $this->client !== null && $this->client->isConnected();
-	}
-
-	/**
 	 * Connect to Redis server.
 	 */
 	protected function connect() {
