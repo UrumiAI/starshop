@@ -16,41 +16,6 @@ class RedisManager {
 	protected $client = null;
 
 	/**
-	 * Initialize Redis connection.
-	 */
-	public function __construct() {
-		$this->init();
-	}
-
-	/**
-	 * Initialize the Redis connection.
-	 */
-	public function init() {
-		if ( ! $this->is_available() ) {
-			return;
-		}
-
-		try {
-			$this->connect();
-		} catch ( \Exception $e ) {
-			// Log connection error
-			if ( class_exists( 'WC_Logger' ) ) {
-				$logger = new \WC_Logger();
-				$logger->error( 'Redis connection error: ' . $e->getMessage(), array( 'source' => 'redis-connection' ) );
-			}
-		}
-	}
-
-	/**
-	 * Check if Predis library is available.
-	 *
-	 * @return bool
-	 */
-	public function is_available() {
-		return class_exists( 'Predis\Client' );
-	}
-
-	/**
 	 * Connect to Redis server.
 	 */
 	protected function connect() {
@@ -86,6 +51,9 @@ class RedisManager {
 	 * @return \Predis\Client|null
 	 */
 	public function get_client() {
+		if ( ! isset( $this->client ) || is_null( $this->client ) ) {
+			$this->connect();
+		}
 		return $this->client;
 	}
 }
