@@ -42,7 +42,7 @@ export function shopPage() {
 		} );
 		checkResponse( response, 200, {
 			title: `Shop – ${ STORE_NAME }`,
-			body: '<header class="woocommerce-products-header">',
+			body: '<p class="woocommerce-result-count">',
 			footer: FOOTER_TEXT,
 		} );
 	} );

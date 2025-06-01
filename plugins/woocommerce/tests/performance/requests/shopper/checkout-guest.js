@@ -61,7 +61,7 @@ export function checkoutGuest() {
 		} );
 		checkResponse( response, 200, {
 			title: `Checkout – ${ STORE_NAME }`,
-			body: 'class="checkout woocommerce-checkout"',
+			body: 'wp-block-woocommerce-checkout-fields-block',
 			footer: FOOTER_TEXT,
 		} );
 

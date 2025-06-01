@@ -72,7 +72,7 @@ export function checkoutCustomerLogin() {
 
 		checkResponse( response, 200, {
 			title: `Checkout – ${ STORE_NAME }`,
-			body: 'class="checkout woocommerce-checkout"',
+			body: 'aria-label="Checkout"',
 			footer: FOOTER_TEXT,
 		} );
 
